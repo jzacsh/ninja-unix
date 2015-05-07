@@ -30,14 +30,6 @@ if [ ! -f "$PRINTER_CONF" ]; then
 	mv "$(download "$URL")" "$PRINTER_CONF" >/dev/null
 fi
 
-PPD="hp-laserjet-9050-$(uname).ppd"
-if [ ! -f $PPD ]; then
-	echo "No ppd file. Attempting to download."
-	URL=https://raw.github.com/adicu/ninja-unix/master/$PPD
-	PPD="$(mktemp -t "XXXXXX_${PPD}")"
-	mv "$(download "$URL")" "$PPD" >/dev/null
-fi
-
 LPADMIN=`which lpadmin`
 if [ -z $LPADMIN ]; then
 	echo "Could not find the lpadmin program." >&2
@@ -46,7 +38,7 @@ if [ -z $LPADMIN ]; then
 fi
 
 add_ninja(){
-	$LPADMIN -p $1 -E -v lpd://$2/public -P $PPD -L $3
+	$LPADMIN -p $1 -E -v lpd://$2/public -m drv:///sample.drv/generic.ppd -L $3
 }
 
 read_config(){
